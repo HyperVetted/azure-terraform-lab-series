@@ -80,6 +80,7 @@ The repository follows a progressive lab series covering the major Terraform con
 | LAB-003 | Resource References and Dependencies |
 | LAB-004 | Existing Infrastructure with Data Sources |
 | LAB-005 | Parameterized Azure Network |
+| LAB-005B | Structured Input Network |
 | LAB-006 | `count` and `for_each` |
 | LAB-007 | Plan Interpretation and Resource Lifecycle |
 | LAB-008 | Validation and Conditions |
