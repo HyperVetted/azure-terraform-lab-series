@@ -84,7 +84,7 @@ The repository follows a progressive lab series covering the major Terraform con
 | LAB-006 | `count` and `for_each` |
 | LAB-007 | Plan Interpretation and Resource Lifecycle |
 | LAB-008 | Validation and Conditions |
-| LAB-009 | Local Modules |
+| LAB-009 | Small Azure Local Module |
 | LAB-010 | Registry Modules |
 | LAB-011 | Terraform State Inspection |
 | LAB-012 | Remote State and Backends |
