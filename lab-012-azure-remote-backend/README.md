@@ -1,90 +1,136 @@
 # LAB-012 — Azure Remote Backend
 
-**Phase:** 12 — Backends and Remote State  
-**Completed:** October 15, 2026 (my reported lab completion)
+**Phase:** 12 — Backends and Remote State
 
-This was my first hands-on attempt at moving Terraform state from a local file into Azure Blob Storage. The main thing I wanted to understand was the difference between **moving state** and **just connecting Terraform to a backend**.
+## Objective
 
-I'm still learning Terraform. This is a record of what I worked on and what tripped me up, not a production setup guide.
+Move an existing Terraform state from the local backend to **Azure Blob Storage** without recreating infrastructure. Then use `terraform init -reconfigure` to connect a separate working directory to the same remote state.
 
-## My setup
+The lab also covers backend authentication, an incorrect state key, and state locking.
 
-- One existing Azure Resource Group where I have **Contributor** access
-- An Azure Storage Account inside that same Resource Group
-- A private blob container for the Terraform state
-- A simple Azure VNet managed by Terraform
-- PowerShell, Azure CLI, and Terraform on my computer
+## Environment
 
-I did not create a new Resource Group. I also kept the Storage Account **outside** the Terraform configuration whose state I was migrating.
+- Terraform CLI, Azure CLI, and PowerShell
+- One **existing Azure Resource Group** with Contributor access
+- One Azure Storage Account in that Resource Group
+- One private blob container for Terraform state
+- One small Azure Virtual Network (VNet) for testing
 
-## What happened during the lab
+The Resource Group and Storage Account are **not managed** by the Terraform configuration in this lab. No new Resource Group is required.
 
-1. Started with Terraform using local state for a small Azure resource.
-2. Prepared an Azure Storage Account and a container to hold state.
-3. Added an **azurerm backend** to the Terraform configuration.
-4. Worked through **terraform init -migrate-state**, which is meant to transfer the existing bindings to the remote backend.
-5. Practiced **terraform init -reconfigure** with another working directory to connect to state that was already there.
-6. The runbook also included checking the state/plan, deliberately pointing to an unused state key **without applying**, restoring the correct key, and testing locking.
+## Repository files
 
-I reported the restarted lab complete on October 15. I did **not** save a full terminal transcript from the completed run, so the repository does not claim verified plan or lock-test output.
-
-## The problem I actually ran into
-
-My first attempt at migration stopped with:
-
-~~~text
-403 AuthorizationPermissionMismatch
-~~~
-
-At first I thought having Contributor on the Resource Group should be enough. It wasn't enough for **Entra-authenticated blob data access**.
-
-I checked with Azure CLI using blob data authentication and got a permissions error too. We confirmed that Shared Key access was enabled on the Storage Account and that I could retrieve an account key.
-
-I then decided to restart the lab and recreate the Storage Account. The restarted runbook used **Storage Account key authentication** instead of assuming I had Storage Blob Data Contributor rights.
-
-**Lesson:** Permission to manage a Storage Account is not the same thing as permission to read its blobs using Entra ID. An access key is a different authentication method and has much broader access; I would prefer scoped blob RBAC where available.
-
-## What finally made sense
-
-| Command | What I use it for |
+| File | Purpose |
 | --- | --- |
-| `terraform init -migrate-state` | Initialize the configured backend **and transfer** the previous state |
-| `terraform init -reconfigure` | Initialize the configured backend **without transferring** the previous state |
+| `providers.tf` | Terraform and AzureRM provider requirements |
+| `variables.tf` | Existing Resource Group and VNet name inputs |
+| `main.tf` | Resource Group data source and lab VNet |
+| `outputs.tf` | VNet ID output |
+| `backend.tf.example` | Template for the Azure remote backend |
 
-My earlier mistake was thinking `-reconfigure` meant going back to local state. It doesn't. Terraform uses the backend in the current HCL.
+The Terraform files are sanitized examples. Set environment-specific names locally.
 
-Another important point: if I point Terraform at a **different empty state key**, it loses access to the old resource bindings. A plan can then propose creating resources that already exist in Azure. That's why I should never apply blindly after a backend change.
+## Procedure
 
-## Files in this folder
+### 1. Establish local state
 
-These are **sanitized example files reconstructed from the lab requirements**, **not an exact upload of the HCL from my computer**:
+Start in a dedicated lab directory with the example Terraform configuration. **Do not create `backend.tf` yet.**
 
-- `providers.tf` — Terraform and AzureRM provider requirements
-- `variables.tf` — inputs for an existing Resource Group and VNet name
-- `main.tf` — existing RG data source and one lab VNet
-- `outputs.tf` — VNet ID
-- `backend.tf.example` — Azure Blob backend template, added only **after** local state exists
+Set `ARM_SUBSCRIPTION_ID`, `TF_VAR_resource_group_name`, and `TF_VAR_vnet_name` locally. Select a VNet name that does not already exist in the Resource Group.
 
-No live state, subscription IDs, storage keys, or actual Azure resource names are published here.
+```powershell
+terraform init
+terraform validate
+terraform plan
+terraform apply
+terraform state list
+```
 
-## Repeating the exercise
+Review the plan before applying. The first apply should create only the lab VNet. Confirm the resource binding exists in the local state, then save a protected backup of `terraform.tfstate` **outside the repository**.
 
-1. Set your Azure subscription ID using `ARM_SUBSCRIPTION_ID`, and supply the existing RG name and a unique VNet name through `TF_VAR_resource_group_name` and `TF_VAR_vnet_name`.
-2. With **no active backend.tf**, run `terraform init`, review `terraform plan`, then `terraform apply` to create the test VNet with local state.
-3. Inspect `terraform state list` and make a secure backup of local state outside Git.
-4. Create or select an approved Storage Account and private blob container. Verify the chosen state key does not already exist.
-5. Copy `backend.tf.example` to `backend.tf`, then replace the placeholders. Supply an approved Storage Account key through `ARM_ACCESS_KEY` **outside HCL**, if permitted.
-6. Run `terraform init -migrate-state`. Check `terraform state list` and `terraform plan` before making any infrastructure changes.
-7. In a second directory containing the same configuration but **no copied state or .terraform directory**, run `terraform init -reconfigure` with the same backend settings. Verify the bindings.
-8. For the wrong-key exercise, use a confirmed-unused lab-only state key and **do not apply**. Restore the correct key and run `terraform init -reconfigure` again.
-9. Test locking only in a controlled session. Never force-unlock an active operation. Review any destroy plan before cleanup.
+### 2. Prepare the remote backend
 
-## Takeaways
+In the existing Resource Group, prepare an Azure Storage Account and a **private** blob container. Select a dedicated, unused blob name such as `lab012.tfstate`.
 
-- **Provider:** talks to Azure to manage infrastructure.
-- **Backend:** stores Terraform state.
-- **Migration:** brings previous state bindings along.
-- **Reconfiguration:** uses whatever state exists at the configured location.
-- **Security:** Terraform state and Storage Account keys should never be committed to Git.
+For this exercise, account-key authentication is an option when permitted by policy. Supply the key through the `ARM_ACCESS_KEY` environment variable in the PowerShell session. **Never put a key in HCL, Git, or terminal output that will be shared.**
 
-The Phase 12 gate is separate from completing this lab.
+Resource Group **Contributor** permissions do not automatically provide Microsoft Entra blob data access. Entra-based backend access normally requires an appropriate storage data-plane role, such as **Storage Blob Data Contributor**. An account key provides much broader access and should be handled accordingly.
+
+### 3. Migrate local state
+
+Copy `backend.tf.example` to `backend.tf` and replace the Resource Group, Storage Account, container, and state-key placeholders with the lab values.
+
+Predict whether the existing VNet should change. Then run:
+
+```powershell
+terraform init -migrate-state
+terraform state list
+terraform plan
+```
+
+**Expected:** Existing resource bindings are transferred to the remote state. With unchanged configuration and no drift, the plan reports no changes.
+
+### 4. Reconfigure a second working directory
+
+Create a second directory containing the same `.tf` configuration, including the correct `backend.tf`. **Do not copy `.terraform/` or any state files.**
+
+In the second directory, run:
+
+```powershell
+terraform init -reconfigure
+terraform state list
+terraform plan
+```
+
+**Expected:** Terraform connects to the **existing** Azure state blob. The original VNet binding is visible without migrating a local state file. A normal `terraform init` would also initialize a brand-new directory; `-reconfigure` is used here to demonstrate its behavior explicitly.
+
+### 5. Test an incorrect backend key
+
+In the **second** directory only, change the backend `key` to a verified-unused test blob name. Run:
+
+```powershell
+terraform init -reconfigure
+terraform state list
+terraform plan
+```
+
+**Expected:** The new backend location does not contain the previous VNet binding. Terraform may plan to create a VNet that already exists in Azure.
+
+**Do not apply this plan.** Restore the original state key, run `terraform init -reconfigure` again, and verify the original bindings return.
+
+### 6. Observe state locking
+
+With both directories pointing to the same **correct** remote state:
+
+1. In one terminal, start an operation that acquires the state lock and leave it active.
+2. In another terminal, attempt `terraform plan -lock-timeout=10s` against the same state.
+3. Observe the lock-acquisition behavior. Cancel the first operation normally and verify access returns.
+
+Do not force-unlock a currently active operation.
+
+### 7. Verify and clean up
+
+Check the final state addresses and plan from the correctly configured directory. If removing the test VNet, inspect `terraform plan -destroy` before approving `terraform destroy`.
+
+Do not destroy a shared Resource Group or Storage Account as part of VNet cleanup. Protect or remove retained state and backups according to the lab environment's requirements. Clear temporary credential environment variables when finished.
+
+## Migration vs. reconfiguration
+
+| Command | Behavior |
+| --- | --- |
+| `terraform init -migrate-state` | Initializes the configured backend and migrates existing state from the previous backend when applicable |
+| `terraform init -reconfigure` | Initializes the configured backend **without migrating** previous state |
+
+Both use the backend currently configured in HCL. `-reconfigure` does **not** mean switching back to local state.
+
+## Troubleshooting
+
+**`403 AuthorizationPermissionMismatch` when listing blobs:** The identity used for blob data access may not have the required permissions. Resource Group Contributor alone does not grant Entra blob data permissions. Verify the authentication method and assigned data-plane role before retrying migration.
+
+**Terraform proposes creating an existing resource after a backend change:** Verify the backend storage account, container, and `key`, then inspect `terraform state list`. Do not apply until the correct state bindings are available.
+
+**State lock prevents an operation:** Check whether another Terraform operation is still active. `-lock-timeout` controls how long Terraform waits to acquire the lock, not how long an operation may hold it.
+
+## Security
+
+Do not commit Terraform state, `.terraform/`, real `.tfvars`, account keys, SAS tokens, credentials, or saved plans. Terraform state may contain sensitive values even when normal CLI output hides them.
