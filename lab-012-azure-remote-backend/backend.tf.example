@@ -1,0 +1,13 @@
+# This file is intentionally NOT backend.tf yet.
+# First create and inspect LOCAL state, then copy this file to backend.tf.
+# Replace these example names with the existing RG, Storage Account, and container.
+# Do not put access keys or SAS tokens in this file.
+# If authorized to use an account key, supply it separately via ARM_ACCESS_KEY.
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "REPLACE_WITH_EXISTING_RG"
+    storage_account_name = "replacewithyourstorageaccount"
+    container_name       = "tfstate"
+    key                  = "lab012.tfstate"
+  }
+}
