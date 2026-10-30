@@ -12,7 +12,7 @@ Registry source
 → documented output
 ```
 
-The public copy is sanitized so it does not contain a real Resource Group name, Terraform state, credentials, or environment-specific values.
+Set the Resource Group name locally. State, credentials, and environment-specific values are excluded from version control.
 
 ## Module Used
 
@@ -61,7 +61,7 @@ lab-010-registry-module/
 └── outputs.tf
 ```
 
-The configuration keeps the input declaration in `main.tf` so the public lab matches the small three-file shape used during the exercise.
+The input variable is declared in `main.tf`; this lab uses three Terraform files.
 
 ## Provider Compatibility
 

@@ -56,7 +56,7 @@ lab-006-count-for-each/
 | `variables.tf` | Defines the existing infrastructure names and keyed subnet input |
 | `main.tf` | Reads the existing RG/VNet and creates the subnet instances with `for_each` |
 | `outputs.tf` | Exposes the existing VNet name and keyed subnet IDs |
-| `terraform.tfvars.example` | Public-safe example values |
+| `terraform.tfvars.example` | Example input values |
 | `README.md` | Documents the two-pass experiment and final configuration |
 
 ## Prerequisites

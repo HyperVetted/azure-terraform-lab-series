@@ -94,7 +94,7 @@ The repository follows a progressive lab series covering the major Terraform con
 | LAB-016 | HCP Terraform Workflow |
 | LAB-017 | Integrated Azure Capstone |
 
-Labs are added to the repository as they are completed and cleaned up for public use.
+Labs are added to the repository as they are completed.
 
 ---
 

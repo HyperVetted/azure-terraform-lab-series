@@ -28,7 +28,7 @@ The Resource Group and Storage Account are **not managed** by the Terraform conf
 | `outputs.tf` | VNet ID output |
 | `backend.tf.example` | Template for the Azure remote backend |
 
-The Terraform files are sanitized examples. Set environment-specific names locally.
+Set the Resource Group, VNet, and backend names locally.
 
 ## Procedure
 

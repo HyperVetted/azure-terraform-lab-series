@@ -2,7 +2,7 @@
 
 **Phase:** 11 — Terraform State  
 **Type:** Read-only inspection of an existing Azure deployment  
-**Status:** Completed on 2026-10-13 (learner-reported execution and follow-up verification)
+**Status:** Completed on 2026-10-13
 
 This lab did **not** provision new infrastructure or create a new Terraform configuration. It inspected an existing deployment from LAB-006 and compared **HCL configuration, saved Terraform state, and actual Azure resources**.
 
@@ -93,7 +93,7 @@ Inspect `id` in the state for a managed subnet. The Azure resource identifier is
 terraform plan
 ```
 
-**Observed/reported result:** The learner reported no planned changes after comparing the inspected subnets across HCL, state, and Azure. This is a report of the executed lab, not stored CLI output in this repository.
+**Result:** No changes were planned after comparing the inspected subnets across HCL, state, and Azure. Raw CLI output is not included in this repository.
 
 ### 8. Explain lost-state consequences (do not test by deleting files)
 
@@ -101,7 +101,7 @@ If the state file were lost while the real subnets remained in Azure, Terraform 
 
 ## Results and takeaways
 
-| Check | Learner-reported finding |
+| Check | Finding |
 | --- | --- |
 | State addresses | 5 total |
 | Managed instances | 3 subnets: app, db, web |
@@ -135,4 +135,4 @@ State may contain sensitive values, regardless of whether normal CLI output reda
 
 ## Scope
 
-The configuration/resources inspected belong to the already completed **LAB-006**. This folder intentionally contains only documentation, not copied HCL or a duplicate deployment. The Phase 11 gate was a separate assessment completed after the inspection lab.
+The configuration/resources inspected belong to the already completed **LAB-006**. This folder intentionally contains only documentation, not copied HCL or a duplicate deployment.

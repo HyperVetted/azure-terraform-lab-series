@@ -58,7 +58,7 @@ lab-008-configuration-validation/
 └── terraform.tfvars.example
 ```
 
-The public repository intentionally excludes real tfvars, Terraform state, saved plan files, and environment-specific values.
+Local tfvars, Terraform state, saved plans, and environment-specific values are excluded from version control.
 
 ## Before Starting
 
@@ -78,7 +78,7 @@ Copy-Item terraform.tfvars.example terraform.tfvars
 
 Then replace the example Resource Group name with the real existing Resource Group used for the lab.
 
-The public version uses a generic Resource Group prefix check. Adapt that precondition to the naming rule used in your environment.
+The configuration uses a Resource Group prefix check. Adapt that precondition to the naming rule used in your environment.
 
 ## Baseline Configuration
 

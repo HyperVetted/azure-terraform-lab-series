@@ -114,7 +114,7 @@ lab-005b-structured-input-network/
 | `locals.tf` | Builds resource names and common tags |
 | `paramvnetlab.tf` | Reads the existing Resource Group and creates the VNet/subnets |
 | `outputs.tf` | Exposes useful resource attributes |
-| `terraform.tfvars.example` | Public-safe example input values |
+| `terraform.tfvars.example` | Example input values |
 | `README.md` | Documents the lab and its behavior |
 
 Terraform reads all `.tf` files in the working directory as one configuration. The filename `paramvnetlab.tf` has no special Terraform behavior and could also be named `main.tf`.
