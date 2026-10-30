@@ -1,0 +1,19 @@
+rg_name   = "your-existing-resource-group"
+vnet_name = "lab005b-lab-vnet"
+
+subnet = {
+  web = {
+    name             = "lab006-web-snet"
+    address_prefixes = "10.80.10.0/24"
+  }
+
+  app = {
+    name             = "lab006-app-snet"
+    address_prefixes = "10.80.20.0/24"
+  }
+
+  db = {
+    name             = "lab006-db-snet"
+    address_prefixes = "10.80.30.0/24"
+  }
+}
