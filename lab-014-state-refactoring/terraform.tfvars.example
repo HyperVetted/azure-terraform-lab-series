@@ -1,0 +1,5 @@
+# Optional alternative to the PowerShell TF_VAR_* setup in README.md.
+# Copy to terraform.tfvars and supply values from your own Azure environment.
+resource_group_name = "example-existing-resource-group"
+location            = "eastus2"
+nsg_name            = "nsg-lab014-unique-suffix"

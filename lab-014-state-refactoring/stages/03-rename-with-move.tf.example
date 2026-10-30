@@ -1,0 +1,15 @@
+resource "azurerm_network_security_group" "perimeter" {
+  name                = var.nsg_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+
+  tags = {
+    lab     = "014"
+    purpose = "state-refactoring"
+  }
+}
+
+moved {
+  from = azurerm_network_security_group.legacy
+  to   = azurerm_network_security_group.perimeter
+}

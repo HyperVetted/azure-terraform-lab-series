@@ -1,0 +1,16 @@
+module "security" {
+  source              = "./modules/security"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  nsg_name            = var.nsg_name
+}
+
+moved {
+  from = azurerm_network_security_group.legacy
+  to   = azurerm_network_security_group.perimeter
+}
+
+moved {
+  from = azurerm_network_security_group.perimeter
+  to   = module.security.azurerm_network_security_group.perimeter
+}

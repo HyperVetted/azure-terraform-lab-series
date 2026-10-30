@@ -1,0 +1,7 @@
+removed {
+  from = module.security.azurerm_network_security_group.perimeter
+
+  lifecycle {
+    destroy = false
+  }
+}
