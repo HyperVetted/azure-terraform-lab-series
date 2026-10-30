@@ -1,0 +1,4 @@
+import {
+  to = azurerm_network_security_group.existing
+  id = var.nsg_id
+}

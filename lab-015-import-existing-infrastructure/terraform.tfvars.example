@@ -1,0 +1,6 @@
+# Copy to terraform.tfvars and replace these sample values with your own.
+rg_name  = "example-existing-rg"
+nsg_name = "nsg-lab015-example"
+location = "eastus2"
+sub_id   = "00000000-0000-0000-0000-000000000000"
+nsg_id   = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-existing-rg/providers/Microsoft.Network/networkSecurityGroups/nsg-lab015-example"
