@@ -1,8 +1,6 @@
 # LAB-013 — Drift and Refresh
 
-**Phase:** 13 — Drift and Refresh  
-**Status:** Completed by learner report on 2026-10-20; CLI outputs were not independently reviewed.  
-**Gate:** Pending and separate from lab completion.
+**Phase:** 13 — Drift and Refresh
 
 ## Objective
 
@@ -22,7 +20,7 @@ Deploy one Azure Network Security Group (NSG), intentionally modify a tag outsid
 | `provider.tf` | Terraform and AzureRM requirements / provider configuration |
 | `main.tf` | Existing Resource Group data source, NSG, tags, and NSG ID output |
 
-These are **sanitized versions of the learner's submitted Terraform files**. The actual Resource Group name and personalized owner-tag value are not published. The public example uses a `resource_group_name` input and the existing Resource Group's `location`; the submitted lab configuration used a specific Resource Group name and fixed `eastus2` location. No original state, provider credentials, or Azure resource IDs are included.
+The configuration is reusable across Azure environments. Supply the existing Resource Group name through the `resource_group_name` variable; the NSG inherits that Resource Group's location. No state, credentials, or Azure resource IDs are included.
 
 ## Procedure
 
@@ -101,8 +99,6 @@ terraform state list
 
 `ignore_changes` was deliberately not used in this lab: it would suppress the intended tag reconciliation during normal update planning.
 
-## Evidence and security
+## Security
 
-Lab completion and cleanup were reported by the learner, not independently verified from terminal output. The described expected outcomes are Terraform behavior and runbook checkpoints, **not claims that captured CLI evidence was supplied**.
-
-Do not publish `terraform.tfstate`, state backups, `.terraform/`, saved plans, real `.tfvars`, credential files, Azure subscription IDs, full live resource IDs, or screenshots containing secrets. Review diffs before committing. The Phase 13 gate is a separate independent assessment.
+Do not publish `terraform.tfstate`, state backups, `.terraform/`, saved plans, real `.tfvars`, credential files, Azure subscription IDs, full live resource IDs, or screenshots containing secrets. Review diffs before committing.
