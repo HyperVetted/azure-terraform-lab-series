@@ -1,0 +1,2 @@
+rg_name   = "YOUR_EXISTING_RG_NAME"
+vnet_name = "lab-007-lab-vnet"
