@@ -1,3 +1,3 @@
 resource "terraform_data" "practive" {
-  input =  "vcs-practice"
+  input =  "vcs-practice-updated"
 }
