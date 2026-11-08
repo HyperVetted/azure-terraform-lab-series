@@ -1,0 +1,23 @@
+# Terraform initialization and state
+**/.terraform/
+**/terraform.tfstate
+**/terraform.tfstate.*
+**/terraform.tfstate.d/
+
+# Inputs, secrets, plans, logs
+**/terraform.tfvars
+**/terraform.tfvars.json
+**/*.auto.tfvars
+**/*.auto.tfvars.json
+**/*.tfplan
+**/plan.out
+**/crash.log
+**/crash.*.log
+**/.env
+**/.env.*
+**/.terraformrc
+**/terraform.rc
+
+# OS/editor artifacts
+.DS_Store
+Thumbs.db
